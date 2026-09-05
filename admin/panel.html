@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edit portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;1,500&family=Libre+Franklin:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/admin/assets/admin.css">
+<script>
+  document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');
+</script>
+</head>
+<body>
+
+<header class="admin-topbar">
+  <div class="admin-topbar__title">Edit portfolio</div>
+  <div class="admin-topbar__actions">
+    <a class="link" href="/" target="_blank" rel="noopener">View site ↗</a>
+    <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch to light mode">☀</button>
+    <label class="switch switch--compact preview-switch">
+      <input type="checkbox" id="preview-toggle-checkbox">
+      <span class="switch__track"><span class="switch__thumb"></span></span>
+      <span class="switch__label">Live preview</span>
+    </label>
+    <button id="save-btn" class="btn">Save changes</button>
+    <button id="export-btn" class="btn btn--ghost" type="button">Export static site ↓</button>
+    <button id="logout-btn" class="btn btn--ghost">Log out</button>
+  </div>
+</header>
+
+<div id="toast" class="toast" hidden></div>
+
+<div id="preview-panel" class="preview-panel" hidden>
+  <div class="preview-panel__head">
+    <span>Live preview — unsaved edits included</span>
+    <div class="preview-viewport-toggle" role="group" aria-label="Preview width">
+      <button type="button" class="preview-viewport-toggle__btn is-active" data-viewport="desktop">Desktop</button>
+      <button type="button" class="preview-viewport-toggle__btn" data-viewport="mobile">Mobile</button>
+    </div>
+    <button id="preview-close-btn" class="icon-btn" type="button" aria-label="Close preview">✕</button>
+  </div>
+  <div class="preview-panel__frame-wrap">
+    <iframe id="preview-iframe" class="preview-panel__iframe" src="/" title="Site preview"></iframe>
+  </div>
+</div>
+
+<main class="admin-main" id="admin-main">
+
+  <section class="panel">
+    <h2>Design</h2>
+    <div class="field">
+      <label>Theme</label>
+      <select id="f-theme">
+        <option value="ledger">Ledger (default) — warm ivory/pine editorial look</option>
+        <option value="nova">Nova — deep space navy, cyan accent, Inter/JetBrains Mono</option>
+        <option value="prism">Prism — near-black, blue-to-purple gradient name, Inter</option>
+        <option value="monochrome">Monochrome — pure grayscale, no color accent</option>
+        <option value="ember">Ember — fiery red + cyan glow, Orbitron/Sora</option>
+      </select>
+      <p class="hint" style="margin-top:8px;">Only changes color/fonts in dark mode — light mode always looks the same regardless of theme. Check the live preview to see it.</p>
+    </div>
+    <div class="field">
+      <label>Font</label>
+      <select id="f-font">
+        <option value="theme">Match theme (default)</option>
+        <option value="fraunces">Fraunces + Libre Franklin (the original editorial look)</option>
+        <option value="inter">Inter (clean, modern sans)</option>
+        <option value="orbitron">Orbitron + Sora (bold, futuristic)</option>
+        <option value="system">System default (plain, fast-loading)</option>
+      </select>
+      <p class="hint" style="margin-top:8px;">Overrides the theme's own font pairing — pick this if you want to mix, say, the Nova color palette with the original serif headline font.</p>
+    </div>
+    <div class="field">
+      <label>Layout</label>
+      <select id="f-layout">
+        <option value="topnav">Top nav (default)</option>
+        <option value="sidebar">Sidebar nav — fixed left sidebar with your photo, collapses to a menu on mobile</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Background effect (dark mode only)</label>
+      <select id="f-bg-effect">
+        <option value="starfield">Starfield (default) — twinkling stars</option>
+        <option value="particles">Particles — drifting dots that respond to your cursor</option>
+        <option value="none">None</option>
+      </select>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Hero</h2>
+    <div class="field"><label>Name</label><input id="f-name" type="text"></div>
+    <div class="field"><label>Role</label><input id="f-role" type="text"></div>
+    <div class="field"><label>Tagline</label><textarea id="f-tagline" rows="2"></textarea></div>
+    <div class="field"><label>Status line</label><input id="f-status" type="text"></div>
+  </section>
+
+  <section class="panel">
+    <div class="panel__head-row">
+      <h2>About</h2>
+      <label class="switch">
+        <input type="checkbox" id="f-about-visible" checked>
+        <span class="switch__track"><span class="switch__thumb"></span></span>
+        <span class="switch__label">Show on site</span>
+      </label>
+    </div>
+    <div class="field">
+      <label>Photo</label>
+      <div class="photo-row">
+        <img id="photo-preview" class="photo-preview" alt="">
+        <div class="photo-preview photo-preview--empty" id="photo-preview-empty">No photo</div>
+        <div class="photo-row__actions">
+          <input id="photo-input" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+          <button type="button" class="btn btn--small" id="photo-upload-btn">Upload photo</button>
+          <button type="button" class="btn btn--small btn--ghost" id="photo-remove-btn">Remove</button>
+          <p class="hint">Used if no photo is uploaded:</p>
+          <input id="f-photo-label" type="text" maxlength="3" style="width:80px" placeholder="Initials">
+        </div>
+      </div>
+      <div class="photo-row" style="margin-top:14px;">
+        <div class="field field--narrow" style="margin:0;">
+          <label>Size</label>
+          <select id="f-photo-size">
+            <option value="small">Small</option>
+            <option value="medium">Medium</option>
+            <option value="large">Large</option>
+          </select>
+        </div>
+        <div class="field field--narrow" style="margin:0;">
+          <label>Shape</label>
+          <select id="f-photo-shape">
+            <option value="square">Square</option>
+            <option value="rounded">Rounded</option>
+            <option value="circle">Circle</option>
+          </select>
+        </div>
+        <div class="field" style="margin:0;">
+          <label>Show photo in</label>
+          <select id="f-photo-placement">
+            <option value="about">About section (default)</option>
+            <option value="hero">Hero (top, right side)</option>
+            <option value="both">Both</option>
+            <option value="none">None — don't show a photo at all</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Bio paragraphs (one per line)</label>
+      <textarea id="f-about-paragraphs" rows="6"></textarea>
+    </div>
+    <div class="field">
+      <label>Skills (comma-separated)</label>
+      <input id="f-skills" type="text">
+    </div>
+    <div class="field">
+      <div class="field-label-row">
+        <label>Skills display</label>
+      </div>
+      <select id="f-skills-display">
+        <option value="text">Text list (default)</option>
+        <option value="bars">Animated progress bars</option>
+      </select>
+      <p class="hint" style="margin-top:8px;">When set to bars, the site shows the list below instead of the comma-separated one above.</p>
+    </div>
+    <div class="field">
+      <label>Skill bars (name + proficiency)</label>
+      <div id="skill-bars-editor"></div>
+      <button type="button" class="btn btn--small" id="add-skill-bar-btn">+ Add skill bar</button>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel__head-row">
+      <h2>Projects</h2>
+      <label class="switch">
+        <input type="checkbox" id="f-projects-visible" checked>
+        <span class="switch__track"><span class="switch__thumb"></span></span>
+        <span class="switch__label">Show on site</span>
+      </label>
+    </div>
+    <div id="projects-editor"></div>
+    <button type="button" class="btn btn--small" id="add-project-btn">+ Add project</button>
+  </section>
+
+  <section class="panel">
+    <div class="panel__head-row">
+      <h2>Testimonials</h2>
+      <label class="switch">
+        <input type="checkbox" id="f-testimonials-visible" checked>
+        <span class="switch__track"><span class="switch__thumb"></span></span>
+        <span class="switch__label">Show on site</span>
+      </label>
+    </div>
+    <div id="testimonials-editor"></div>
+    <button type="button" class="btn btn--small" id="add-testimonial-btn">+ Add testimonial</button>
+  </section>
+
+  <section class="panel">
+    <div class="panel__head-row">
+      <h2>Resume</h2>
+      <label class="switch">
+        <input type="checkbox" id="f-resume-section-visible" checked>
+        <span class="switch__track"><span class="switch__thumb"></span></span>
+        <span class="switch__label">Show on site</span>
+      </label>
+    </div>
+    <div class="field">
+      <div class="field-label-row">
+        <label>Résumé PDF</label>
+        <label class="switch switch--compact">
+          <input type="checkbox" id="f-resume-visible" checked>
+          <span class="switch__track"><span class="switch__thumb"></span></span>
+          <span class="switch__label">Show download link</span>
+        </label>
+      </div>
+      <div class="photo-row">
+        <span id="resume-pdf-name" class="hint">No file uploaded</span>
+        <div class="photo-row__actions">
+          <input id="resume-input" type="file" accept="application/pdf" hidden>
+          <button type="button" class="btn btn--small" id="resume-upload-btn">Upload PDF</button>
+          <button type="button" class="btn btn--small btn--ghost" id="resume-remove-btn">Remove</button>
+        </div>
+      </div>
+      <div class="parse-row">
+        <button type="button" class="btn btn--small btn--ghost" id="parse-resume-btn" hidden>✨ Autofill About / Skills / Work History from this PDF</button>
+        <p class="hint" id="parse-status"></p>
+      </div>
+    </div>
+    <h3 class="panel__subhead">Work history</h3>
+    <div id="experience-editor"></div>
+    <button type="button" class="btn btn--small" id="add-experience-btn">+ Add role</button>
+  </section>
+
+  <section class="panel">
+    <div class="panel__head-row">
+      <h2>Education</h2>
+      <label class="switch">
+        <input type="checkbox" id="f-education-visible" checked>
+        <span class="switch__track"><span class="switch__thumb"></span></span>
+        <span class="switch__label">Show on site</span>
+      </label>
+    </div>
+    <div id="education-editor"></div>
+    <button type="button" class="btn btn--small" id="add-education-btn">+ Add education</button>
+  </section>
+
+  <section class="panel">
+    <h2>Additional sections</h2>
+    <p class="hint" style="margin-bottom:16px;">
+      Add extra sections to your site — each gets its own heading and nav link, placed right before Contact.
+    </p>
+    <div id="custom-sections-editor"></div>
+    <button type="button" class="btn btn--small" id="add-custom-section-btn">+ Add section</button>
+  </section>
+
+  <section class="panel">
+    <h2>Contact</h2>
+    <div class="field"><label>Email</label><input id="f-email" type="email"></div>
+    <div id="links-editor"></div>
+    <button type="button" class="btn btn--small" id="add-link-btn">+ Add link</button>
+  </section>
+
+  <section class="panel">
+    <h2>Footer</h2>
+    <div class="field"><label>Footer note</label><input id="f-footer" type="text"></div>
+    <div class="field"><label>Copyright year</label><input id="f-copyright-year" type="text" style="max-width:120px"></div>
+    <div class="field"><label>Copyright holder (shown next to the year)</label><input id="f-copyright-holder" type="text"></div>
+  </section>
+
+  <div class="admin-bottom-save">
+    <button id="save-btn-bottom" class="btn">Save changes</button>
+  </div>
+
+</main>
+
+<template id="skill-bar-row-template">
+  <div class="repeat-row">
+    <div class="repeat-row__grid">
+      <div class="field"><label>Skill name</label><input data-field="name" type="text"></div>
+      <div class="field field--narrow">
+        <label>Proficiency (0–100)</label>
+        <input data-field="level" type="number" min="0" max="100" step="5">
+      </div>
+    </div>
+    <div class="repeat-row__actions">
+      <button type="button" class="icon-btn icon-btn--danger" data-action="remove" title="Remove">✕</button>
+    </div>
+  </div>
+</template>
+
+<template id="testimonial-row-template">
+  <div class="repeat-row">
+    <div class="repeat-row__grid">
+      <div class="field"><label>Quote</label><textarea data-field="quote" rows="3"></textarea></div>
+      <div class="field"><label>Name</label><input data-field="name" type="text"></div>
+      <div class="field"><label>Role / company</label><input data-field="role" type="text"></div>
+    </div>
+    <div class="repeat-row__actions">
+      <button type="button" class="icon-btn" data-action="up" title="Move up">↑</button>
+      <button type="button" class="icon-btn" data-action="down" title="Move down">↓</button>
+      <button type="button" class="icon-btn icon-btn--danger" data-action="remove" title="Remove">✕</button>
+    </div>
+  </div>
+</template>
+
+<template id="project-row-template">
+  <div class="repeat-row">
+    <div class="repeat-row__grid">
+      <div class="field"><label>Title</label><input data-field="title" type="text"></div>
+      <div class="field field--narrow"><label>Year</label><input data-field="year" type="text"></div>
+      <div class="field"><label>Description</label><textarea data-field="description" rows="2"></textarea></div>
+      <div class="field"><label>Tags (comma-separated)</label><input data-field="tags" type="text"></div>
+      <div class="field"><label>Link URL</label><input data-field="link" type="text"></div>
+      <div class="field">
+        <label>Image or video (optional)</label>
+        <div class="photo-row">
+          <div class="project-media-preview" data-media-preview></div>
+          <div class="photo-row__actions">
+            <input type="file" accept="image/png,image/jpeg,image/webp,video/mp4,video/webm,video/quicktime" hidden data-media-input>
+            <button type="button" class="btn btn--small" data-media-action="upload">Upload</button>
+            <button type="button" class="btn btn--small btn--ghost" data-media-action="remove">Remove</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="repeat-row__actions">
+      <button type="button" class="icon-btn" data-action="up" title="Move up">↑</button>
+      <button type="button" class="icon-btn" data-action="down" title="Move down">↓</button>
+      <button type="button" class="icon-btn icon-btn--danger" data-action="remove" title="Remove">✕</button>
+    </div>
+  </div>
+</template>
+
+<template id="experience-row-template">
+  <div class="repeat-row">
+    <div class="repeat-row__grid">
+      <div class="field"><label>Role</label><input data-field="role" type="text"></div>
+      <div class="field"><label>Organization</label><input data-field="org" type="text"></div>
+      <div class="field field--narrow"><label>Period</label><input data-field="period" type="text"></div>
+      <div class="field"><label>Summary</label><textarea data-field="summary" rows="2"></textarea></div>
+    </div>
+    <div class="repeat-row__actions">
+      <button type="button" class="icon-btn" data-action="up" title="Move up">↑</button>
+      <button type="button" class="icon-btn" data-action="down" title="Move down">↓</button>
+      <button type="button" class="icon-btn icon-btn--danger" data-action="remove" title="Remove">✕</button>
+    </div>
+  </div>
+</template>
+
+<template id="education-row-template">
+  <div class="repeat-row">
+    <div class="repeat-row__grid">
+      <div class="field"><label>Degree / Field</label><input data-field="degree" type="text"></div>
+      <div class="field"><label>School</label><input data-field="school" type="text"></div>
+      <div class="field field--narrow"><label>Period</label><input data-field="period" type="text"></div>
+      <div class="field"><label>Notes (optional)</label><textarea data-field="summary" rows="2"></textarea></div>
+    </div>
+    <div class="repeat-row__actions">
+      <button type="button" class="icon-btn" data-action="up" title="Move up">↑</button>
+      <button type="button" class="icon-btn" data-action="down" title="Move down">↓</button>
+      <button type="button" class="icon-btn icon-btn--danger" data-action="remove" title="Remove">✕</button>
+    </div>
+  </div>
+</template>
+
+<template id="link-row-template">
+  <div class="repeat-row repeat-row--inline">
+    <div class="repeat-row__grid repeat-row__grid--inline">
+      <div class="field field--narrow">
+        <label>Icon</label>
+        <select data-field="icon">
+          <option value="">None</option>
+          <option value="github">GitHub</option>
+          <option value="linkedin">LinkedIn</option>
+          <option value="twitter">Twitter / X</option>
+          <option value="instagram">Instagram</option>
+          <option value="youtube">YouTube</option>
+          <option value="email">Email</option>
+          <option value="website">Website</option>
+        </select>
+      </div>
+      <div class="field"><label>Label</label><input data-field="label" type="text"></div>
+      <div class="field"><label>URL</label><input data-field="url" type="text"></div>
+    </div>
+    <div class="repeat-row__actions">
+      <button type="button" class="icon-btn icon-btn--danger" data-action="remove" title="Remove">✕</button>
+    </div>
+  </div>
+</template>
+
+<template id="custom-section-row-template">
+  <div class="repeat-row">
+    <div class="repeat-row__grid repeat-row__grid--stacked">
+      <div class="field">
+        <div class="field-label-row">
+          <label>Section title</label>
+          <label class="switch switch--compact">
+            <input type="checkbox" data-field="visible" checked>
+            <span class="switch__track"><span class="switch__thumb"></span></span>
+            <span class="switch__label">Show on site</span>
+          </label>
+        </div>
+        <input data-field="title" type="text" placeholder="e.g. Speaking, Open Source, Hobbies">
+      </div>
+
+      <div class="field">
+        <label>Media — images/videos (optional, reorder with ↑ ↓)</label>
+        <div class="nested-list-editor" data-media-editor></div>
+        <button type="button" class="btn btn--small" data-list-action="add-media">+ Add media</button>
+      </div>
+
+      <div class="field">
+        <label>Content (optional — leave a blank line between paragraphs)</label>
+        <textarea data-field="body" rows="6"></textarea>
+      </div>
+
+      <div class="field">
+        <label>Items (optional — e.g. skills, hobbies, timeline-style entries)</label>
+        <div class="nested-list-editor" data-items-editor></div>
+        <button type="button" class="btn btn--small" data-list-action="add-item">+ Add item</button>
+      </div>
+    </div>
+    <div class="repeat-row__actions">
+      <button type="button" class="icon-btn" data-action="up" title="Move up">↑</button>
+      <button type="button" class="icon-btn" data-action="down" title="Move down">↓</button>
+      <button type="button" class="icon-btn icon-btn--danger" data-action="remove" title="Remove">✕</button>
+    </div>
+  </div>
+</template>
+
+<template id="custom-section-media-row-template">
+  <div class="repeat-row repeat-row--inline">
+    <div class="repeat-row__grid repeat-row__grid--media">
+      <div class="photo-row" style="margin:0;">
+        <div class="project-media-preview" data-media-preview></div>
+        <div class="photo-row__actions">
+          <input type="file" accept="image/png,image/jpeg,image/webp,video/mp4,video/webm,video/quicktime" hidden data-media-input>
+          <button type="button" class="btn btn--small" data-media-action="upload">Upload</button>
+        </div>
+      </div>
+      <div class="field" style="margin:0;">
+        <label>Caption (optional)</label>
+        <input data-field="caption" type="text">
+      </div>
+    </div>
+    <div class="repeat-row__actions">
+      <button type="button" class="icon-btn" data-action="up" title="Move up">↑</button>
+      <button type="button" class="icon-btn" data-action="down" title="Move down">↓</button>
+      <button type="button" class="icon-btn icon-btn--danger" data-action="remove" title="Remove">✕</button>
+    </div>
+  </div>
+</template>
+
+<template id="custom-section-item-row-template">
+  <div class="repeat-row repeat-row--inline">
+    <div class="repeat-row__grid">
+      <div class="field"><label>Title</label><input data-field="title" type="text" placeholder="e.g. Rock climbing"></div>
+      <div class="field"><label>Description (optional)</label><input data-field="description" type="text" placeholder="e.g. Bouldering V3-V5, twice a week"></div>
+    </div>
+    <div class="repeat-row__actions">
+      <button type="button" class="icon-btn" data-action="up" title="Move up">↑</button>
+      <button type="button" class="icon-btn" data-action="down" title="Move down">↓</button>
+      <button type="button" class="icon-btn icon-btn--danger" data-action="remove" title="Remove">✕</button>
+    </div>
+  </div>
+</template>
+
+<script src="/admin/assets/theme.js"></script>
+<script src="/admin/assets/admin.js"></script>
+</body>
+</html>

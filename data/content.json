@@ -1,0 +1,149 @@
+{
+  "theme": "ledger",
+  "font": "theme",
+  "layout": "topnav",
+  "backgroundEffect": "starfield",
+  "name": "YOUR NAME",
+  "role": "YOUR ROLE / TITLE",
+  "tagline": "One sentence describing what you do and who you do it for.",
+  "status": "YOUR CITY, STATE — open to opportunities",
+  "aboutVisible": true,
+  "about": {
+    "paragraphs": [
+      "Write a short paragraph introducing yourself — what you do, what you're good at, what kind of work you're looking for.",
+      "Add a second paragraph here about your background, experience, or what makes your approach different.",
+      "Optional third paragraph — a personal detail or hobby to round things out."
+    ],
+    "skillsDisplay": "text",
+    "skills": [
+      "SKILL ONE",
+      "SKILL TWO",
+      "SKILL THREE",
+      "SKILL FOUR"
+    ],
+    "skillBars": [
+      { "id": "sb1", "name": "SKILL NAME", "level": 80 },
+      { "id": "sb2", "name": "SKILL NAME", "level": 60 }
+    ],
+    "photoLabel": "YN",
+    "photoUrl": "",
+    "photoSize": "medium",
+    "photoShape": "rounded",
+    "photoPlacement": "about"
+  },
+  "projectsVisible": true,
+  "projects": [
+    {
+      "id": "p1",
+      "title": "PROJECT SAMPLE",
+      "year": "20XX",
+      "description": "Describe what this project does, who it's for, and what makes it worth mentioning.",
+      "tags": [
+        "TAG ONE",
+        "TAG TWO"
+      ],
+      "link": "https://github.com/YOURNAME/project-sample",
+      "mediaUrl": "",
+      "mediaType": ""
+    },
+    {
+      "id": "p2",
+      "title": "PROJECT SAMPLE 2",
+      "year": "20XX",
+      "description": "Describe what this project does, who it's for, and what makes it worth mentioning.",
+      "tags": [
+        "TAG ONE",
+        "TAG TWO"
+      ],
+      "link": "https://github.com/YOURNAME/project-sample-2",
+      "mediaUrl": "",
+      "mediaType": ""
+    },
+    {
+      "id": "p3",
+      "title": "PROJECT SAMPLE 3",
+      "year": "20XX",
+      "description": "Describe what this project does, who it's for, and what makes it worth mentioning.",
+      "tags": [
+        "TAG ONE",
+        "TAG TWO"
+      ],
+      "link": "https://github.com/YOURNAME/project-sample-3",
+      "mediaUrl": "",
+      "mediaType": ""
+    }
+  ],
+  "testimonialsVisible": true,
+  "testimonials": [
+    {
+      "id": "t1",
+      "quote": "Sample testimonial text goes here — replace with a real quote from a client, colleague, or manager.",
+      "name": "FULL NAME",
+      "role": "JOB TITLE, COMPANY NAME"
+    },
+    {
+      "id": "t2",
+      "quote": "Sample testimonial text goes here — replace with a real quote from a client, colleague, or manager.",
+      "name": "FULL NAME",
+      "role": "JOB TITLE, COMPANY NAME"
+    }
+  ],
+  "resumeVisible": true,
+  "resume": {
+    "pdfUrl": "",
+    "pdfVisible": true,
+    "experience": [
+      {
+        "id": "e1",
+        "role": "JOB TITLE",
+        "org": "COMPANY NAME",
+        "period": "20XX — Present",
+        "summary": "Describe your role, responsibilities, and a notable result or impact."
+      },
+      {
+        "id": "e2",
+        "role": "JOB TITLE",
+        "org": "COMPANY NAME",
+        "period": "20XX — 20XX",
+        "summary": "Describe your role, responsibilities, and a notable result or impact."
+      }
+    ]
+  },
+  "educationVisible": true,
+  "education": [
+    {
+      "id": "ed1",
+      "degree": "DEGREE NAME",
+      "school": "SCHOOL NAME",
+      "period": "20XX — 20XX",
+      "summary": "Optional notes — honors, relevant coursework, activities."
+    }
+  ],
+  "contact": {
+    "email": "you@example.com",
+    "links": [
+      {
+        "id": "l1",
+        "label": "GitHub",
+        "url": "https://github.com/YOURNAME",
+        "icon": "github"
+      },
+      {
+        "id": "l2",
+        "label": "LinkedIn",
+        "url": "https://linkedin.com/in/YOURNAME",
+        "icon": "linkedin"
+      },
+      {
+        "id": "l3",
+        "label": "Twitter / X",
+        "url": "https://twitter.com/YOURNAME",
+        "icon": "twitter"
+      }
+    ]
+  },
+  "footerNote": "Add a short footer note here — optional.",
+  "copyrightYear": "2026",
+  "copyrightHolder": "YOUR NAME",
+  "customSections": []
+}

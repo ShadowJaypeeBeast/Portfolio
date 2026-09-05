@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin login</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;1,500&family=Libre+Franklin:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/admin/assets/admin.css">
+<script>
+  document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');
+</script>
+</head>
+<body class="login-body">
+  <button id="theme-toggle" class="theme-toggle login-body__theme-toggle" type="button" aria-label="Switch to light mode">☀</button>
+
+  <form id="login-form" class="login-card">
+    <h1>Admin login</h1>
+    <p class="login-card__hint">Enter the username and password from your <code>.env</code> file.</p>
+    <div class="field">
+      <label for="username">Username</label>
+      <input id="username" name="username" type="text" autocomplete="username" autofocus required>
+    </div>
+    <div class="field">
+      <label for="password">Password</label>
+      <input id="password" name="password" type="password" autocomplete="current-password" required>
+    </div>
+    <p id="login-error" class="error" hidden>Incorrect username or password.</p>
+    <button class="btn" type="submit">Log in</button>
+  </form>
+
+  <form id="twofa-form" class="login-card" hidden>
+    <h1>Verification code</h1>
+    <p class="login-card__hint">Enter the 6-digit code from your authenticator app.</p>
+    <div class="field">
+      <label for="code">Code</label>
+      <input id="code" name="code" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" autofocus required>
+    </div>
+    <p id="twofa-error" class="error" hidden>Incorrect or expired code.</p>
+    <button class="btn" type="submit">Verify</button>
+  </form>
+
+  <script src="/admin/assets/theme.js"></script>
+  <script>
+    const loginForm = document.getElementById('login-form');
+    const loginError = document.getElementById('login-error');
+    const twofaForm = document.getElementById('twofa-form');
+    const twofaError = document.getElementById('twofa-error');
+
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      loginError.hidden = true;
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const res = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        loginError.hidden = false;
+        return;
+      }
+      if (data.requires2FA) {
+        loginForm.hidden = true;
+        twofaForm.hidden = false;
+        document.getElementById('code').focus();
+      } else {
+        window.location.href = '/admin';
+      }
+    });
+
+    twofaForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      twofaError.hidden = true;
+      const code = document.getElementById('code').value;
+      const res = await fetch('/api/admin/verify-2fa', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code }),
+      });
+      if (res.ok) {
+        window.location.href = '/admin';
+      } else {
+        twofaError.hidden = false;
+      }
+    });
+  </script>
+</body>
+</html>
